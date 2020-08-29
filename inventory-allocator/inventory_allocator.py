@@ -2,7 +2,8 @@ class InventoryAllocator:
 
     def process_order(self, order, warehouses):
         """
-            Process order by finding the cheapest shipment given order and inventory variables.
+            Process order by finding the cheapest shipment given order and inventory variables. Items are filled as passed in.
+            For each item, iterate through warehouses until order is 0 (filled) or all warehouses checked (order can't be filled).
 
             Parameters
             ----------
@@ -17,7 +18,12 @@ class InventoryAllocator:
                 shipment: list[dict] - [{name : { item: quanitity, ... }}, ...]
         """
 
-        if not self.validate_order(order):
+        order, warehouses = self.remove_empty_items(order, warehouses)
+
+        if len(order) == 0:
+            return []
+
+        if len(warehouses) == 0:
             return []
 
         final_shipment = []
@@ -54,37 +60,30 @@ class InventoryAllocator:
 
                 i += 1
 
+            # Check if order for specific item has been satisfied
+            if i == len(warehouses) and order[item] > 0:
+                return []
+
         print(final_shipment)
         return final_shipment
 
-    def validate_order(self, order):
+    def remove_empty_items(self, order, warehouses):
         """
+        Checks and removes ordered items that have quantity greater than zero using list, dict comprehension
+
         Parameters
         ----------
             order: dict - { item : quanitity, ... }
                 A dict. of items with corresponding quantities to be filled
-
         Returns
         ----------
-            valid - bool describing validity of order
+            cleaned: dict - { item : quanitity, ...}
+                All items have quantity > 0
         """
 
-        def remove_empty_items(order):
-            """
-            Checks and removes ordered items that have quantity greater than zero
-            Parameters
-            ----------
-                order: dict - { item : quanitity, ... }
-                    A dict. of items with corresponding quantities to be filled
-            Returns
-            ----------
-                cleaned: dict - { item : quanitity, ...}
-                    All items have quantity > 0
-            """
+        cleaned_order = {k:v for (k, v) in order.items() if v > 0}
+        cleaned_warehouses =  [{'name':warehouse['name'], 'inventory':{k:v for k, v in warehouse['inventory'].items() if v > 0}} for warehouse in warehouses]
+        return cleaned_order, cleaned_warehouses
 
-            cleaned = [k for k, v in order.items() if v > 0]
-            return cleaned
-
-        order = remove_empty_items(order)
-
-        return True
+if __name__ == '__main__':
+    ia = InventoryAllocator()
