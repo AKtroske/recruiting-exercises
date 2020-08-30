@@ -18,6 +18,10 @@ class InventoryAllocator:
                 shipment: list[dict] - [{name : { item: quanitity, ... }}, ...]
         """
 
+        print("Order: ")
+        print(order)
+        print("Warehouses: ")
+        print(warehouses)
         order, warehouses = self.remove_empty_items(order, warehouses)
 
         if len(order) == 0:
@@ -64,6 +68,7 @@ class InventoryAllocator:
             if i == len(warehouses) and order[item] > 0:
                 return []
 
+        print("Final shipment: ")
         print(final_shipment)
         return final_shipment
 
