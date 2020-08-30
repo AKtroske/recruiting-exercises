@@ -43,7 +43,7 @@ class InventoryAllocator:
 
                 if item in inventory:
 
-                    # Inventory can't satisfy order for item -> amt_to_take is all of inventory then clear inventory
+                    # Inventory can't satisfy order for item -> amt_to_take is all of inventory - clear inventory
                     if inventory[item] - order[item] <= 0:
                         amt_to_take = inventory[item]
                         order[item] -= inventory[item]
@@ -53,7 +53,7 @@ class InventoryAllocator:
                         amt_to_take = order[item]
                         order[item] = 0
 
-                    # Create new warehouse object if warehouse not in final shipment list
+                    # Create new warehouse object if warehouse not in final shipment
                     if name not in names_index:
                         warehouse = { name : { item : amt_to_take } }
                         names_index[name] = len(final_shipment) # add to end of names
